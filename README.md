@@ -1,0 +1,1 @@
+#Experimenting with performance factors of OpenGL particle simulations
