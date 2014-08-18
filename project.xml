@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	
+	<meta title="Particles" package="com.haxiomic.particles" version="1.0.0" company="haxiomic" />
+	<app main="Main" path="Export" file="Particles" />
+	
+	<source path="Source" />
+	
+	<haxelib name="lime" />
+	<haxelib name="shaderblox" />
+	<haxelib name="gltoolbox" />
+	
+</project>
