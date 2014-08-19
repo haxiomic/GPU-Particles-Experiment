@@ -149,3 +149,32 @@ class InitialConditions extends TextureShader{}
 	}
 ')
 class StepParticles extends ParticleBase{}
+
+@:vert('
+	uniform sampler2D particleData;
+	attribute vec2 particleUV;
+	varying vec4 color;
+
+	vec2 p = texture2D(particleData, particleUV).rg;
+	vec2 v = texture2D(particleData, particleUV).ba;
+	
+	void set();
+
+	void main(){
+		color = vec4(1.0, 1.0, 1.0, 1.0);
+		set();
+	}
+
+	void set(){
+		gl_PointSize = 1.0;
+		gl_Position = vec4(p, 0.0, 1.0);
+	}
+')
+@:frag('
+	varying vec4 color;
+
+	void main(){
+		gl_FragColor = vec4(color);
+	}
+')
+class RenderParticles extends ShaderBase{}

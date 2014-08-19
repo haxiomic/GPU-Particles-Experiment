@@ -18,7 +18,7 @@ class Main extends Application {
 	var particles:GPUParticles;
 	//Shaders
 	var mouseForceShader:MouseForceStep;
-	var renderParticlesShader:RenderParticles;
+	var renderParticlesShader:ColorMotion;
 	//UI
 	var isAltDown:Bool = false;
 	var isMouseDown:Bool = false;
@@ -31,7 +31,7 @@ class Main extends Application {
 	public override function init (context:RenderContext):Void {
 		this.gl = context.getParameters()[0];
 		particles = new GPUParticles(gl);
-		renderParticlesShader = new RenderParticles();
+		renderParticlesShader = new ColorMotion();
 		mouseForceShader = new MouseForceStep();
 		particles.stepParticlesShader = mouseForceShader;
 	}
@@ -41,7 +41,6 @@ class Main extends Application {
 	} 
 
 	override function render (context:RenderContext):Void {
-
 		mouseForceShader.isMouseDown.data = isMouseDown;
 		mouseForceShader.multiplier.data = isAltDown == true ? 1 : -1;
 		mouseForceShader.mouse.data.x = (mouse.x/window.width)*2 - 1;//convert to clip space coordinates
@@ -130,31 +129,17 @@ class Main extends Application {
 class MouseForceStep extends GPUParticles.StepParticles{}
 
 @:vert('
-	uniform sampler2D particleData;
-	attribute vec2 particleUV;//particle texture UV
-	varying vec3 color;
-
 	void main(){
-		vec2 p = texture2D(particleData, particleUV).rg;
-
 		//generate color
 		vec2 v = texture2D(particleData, particleUV).ba;
 		float lv = length(v);
 		vec3 cvec = vec3(sin(lv/3.0)*1.5-lv*lv*0.7, lv*lv*30.0, lv+lv*lv*10.0);
-		color = vec3(0.5, 0.3, 0.13)*0.3+cvec*cvec*800.;
+		color = vec4(vec3(0.5, 0.3, 0.13)*0.3+cvec*cvec*800., 1.0);
 
-		gl_Position = vec4(p, 0.0, 1.0);
-		gl_PointSize = 1.0;
+		set();
 	}
 ')
-@:frag('
-	varying vec3 color;
-
-	void main(){
-		gl_FragColor = vec4(color, 1.0);
-	}
-')
-class RenderParticles extends ShaderBase{}
+class ColorMotion extends GPUParticles.RenderParticles{}
 
 
 
